@@ -1,7 +1,9 @@
+// TemplateLibrary.tsx
+
 'use client'
 
-import { useEffect, useState } from "react"
-import { TEMPLATE_REGISTRY } from "@/templates"
+import { useState, useEffect } from "react"
+import { TEMPLATE_REGISTRY } from "@/templates/index"
 
 export default function TemplateLibrary({ onSelectTemplate }: any) {
   const [templates, setTemplates] = useState<any[]>([])
@@ -20,8 +22,7 @@ export default function TemplateLibrary({ onSelectTemplate }: any) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {templates.map((template) => {
-          const TemplateComponent =
-            TEMPLATE_REGISTRY[template.id]
+          const TemplateComponent = TEMPLATE_REGISTRY[template.id]
 
           if (!TemplateComponent) return null
 
@@ -32,31 +33,14 @@ export default function TemplateLibrary({ onSelectTemplate }: any) {
               onClick={() => onSelectTemplate(template)}
             >
               {/* PREVIEW WINDOW */}
-              <div className="relative h-[420px] bg-neutral-900 rounded-t-xl overflow-hidden">
+              <div className="h-[400px] overflow-hidden bg-gray-100 relative">
 
-  {/* Browser Top Bar */}
-  <div className="h-8 bg-neutral-800 flex items-center px-3 gap-2">
-    <div className="w-3 h-3 bg-red-500 rounded-full" />
-    <div className="w-3 h-3 bg-yellow-400 rounded-full" />
-    <div className="w-3 h-3 bg-green-500 rounded-full" />
-  </div>
+                {/* Scale Down Real Template */}
+                <div className="scale-[0.35] origin-top-left pointer-events-none">
+                  <TemplateComponent content={{}} />
+                </div>
 
-  {/* Preview Viewport */}
-  <div className="absolute top-8 left-0 right-0 bottom-0 flex justify-center overflow-hidden">
-
-    <div
-      style={{
-        width: "1200px",
-        transform: "scale(0.5)",
-        transformOrigin: "top center"
-      }}
-      className="pointer-events-none"
-    >
-      <TemplateComponent content={{}} />
-    </div>
-
-  </div>
-</div>
+              </div>
 
               <div className="p-4 border-t bg-white">
                 <h3 className="font-semibold text-lg">
