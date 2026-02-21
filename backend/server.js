@@ -72,6 +72,9 @@ app.get("/api/debug/tenant", authMiddleware, async (req, res) => {
   }
 });
 
+const usageRoutes = require("./routes/usageRoutes");
+app.use("/api/usage", usageRoutes);
+
 // ----------------------
 // Start Server (ALWAYS LAST)
 // ----------------------

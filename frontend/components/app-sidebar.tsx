@@ -47,7 +47,7 @@ export function AppSidebar() {
     const storedUser = localStorage.getItem("user")
 
     if (!token) {
-      router.push("/login")
+      router.push("/sign-in")
       return
     }
 
@@ -97,7 +97,7 @@ export function AppSidebar() {
                   >
                     <item.icon
                       className={cn(
-                        "h-[18px] w-[18px] shrink-0 transition-colors",
+                        "h-4.5 w-4.5 shrink-0 transition-colors",
                         isActive
                           ? "text-sidebar-primary"
                           : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/70"
