@@ -16,6 +16,7 @@ const billingRoutes = require("./routes/billingRoutes");
 // Middleware
 const authMiddleware = require("./middleware/authMiddleware");
 
+const aiRoutes = require("./routes/aiRoutes");
 const app = express();
 
 // ----------------------
@@ -35,6 +36,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("SitePilot API Running");
 });
+
+app.use("/ai", aiRoutes);
 
 // ----------------------
 // API Routes
