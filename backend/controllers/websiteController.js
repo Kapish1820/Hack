@@ -39,3 +39,35 @@ exports.createWebsite = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getWebsites = async (req, res) => {
+  try {
+    const tenantId = req.user.tenantId;
+
+    const websites = await Website.find({ tenantId });
+
+    res.json(websites);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+exports.deleteWebsite = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const tenantId = req.user.tenantId;
+
+    const website = await Website.findOne({ _id: id, tenantId });
+
+    if (!website) {
+      return res.status(404).json({ message: "Website not found" });
+    }
+
+    await website.deleteOne();
+
+    res.json({ message: "Website deleted successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

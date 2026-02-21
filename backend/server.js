@@ -32,3 +32,6 @@ app.get("/api/test-protected", authMiddleware, (req, res) => {
 
 const websiteRoutes = require("./routes/websiteRoutes");
 app.use("/api/websites", websiteRoutes);
+
+const pageRoutes = require("./routes/pageRoutes");
+app.use("/api/pages", pageRoutes);
