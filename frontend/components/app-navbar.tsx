@@ -11,8 +11,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/dist/client/components/navigation"
+
+interface User {
+  id: string
+  name: string
+  email: string
+  role: string
+}
 
 export function AppNavbar() {
+
+  const router = useRouter()
+  
+    const [user, setUser] = useState<User | null>(null)
+  
+    useEffect(() => {
+      const token = localStorage.getItem("token")
+      const storedUser = localStorage.getItem("user")
+  
+      if (!token) {
+        router.push("/sign-in")
+        return
+      }
+  
+      if (storedUser) {
+        setUser(JSON.parse(storedUser))
+      }
+    }, [router])
+    
   return (
     <header className="flex h-14 items-center justify-between border-b border-border bg-card px-6">
       <div className="flex items-center gap-4">
@@ -90,7 +118,7 @@ export function AppNavbar() {
             >
               <Avatar className="h-7 w-7">
                 <AvatarFallback className="bg-primary text-primary-foreground text-[11px] font-bold">
-                  JD
+                  {user?.name ? user.name.charAt(0).toUpperCase() + user.name.split(" ")[1]?.charAt(0).toUpperCase() || "" : "U"}
                 </AvatarFallback>
               </Avatar>
             </Button>
