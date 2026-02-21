@@ -27,7 +27,10 @@ connectDB();
 // ----------------------
 // Global Middleware
 // ----------------------
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000", // Next.js default
+  credentials: true
+}));
 app.use(express.json());
 
 // ----------------------
