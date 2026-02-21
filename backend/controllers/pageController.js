@@ -67,3 +67,53 @@ exports.getPagesByWebsite = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Update the position (x, y) of a component in a page
+exports.updateComponentPosition = async (req, res) => {
+  try {
+    const { pageId, componentId, x, y } = req.body;
+
+    // Find the page
+    const page = await Page.findById(pageId);
+
+    if (!page) {
+      return res.status(404).json({ message: "Page not found" });
+    }
+
+    // Find the component and update its x, y position
+    const component = page.components.id(componentId);
+    
+    if (component) {
+      component.x = x;
+      component.y = y;
+
+      await page.save();
+
+      res.status(200).json({ message: "Component position updated", page });
+    } else {
+      res.status(404).json({ message: "Component not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const Page = require("../models/Page");
+
+exports.saveLayout = async (req, res) => {
+  try {
+    const { elements, templateId } = req.body;
+    const tenantId = req.user.tenantId;
+
+    // Create or update the page layout for the given template
+    const page = await Page.create({
+      tenantId,
+      websiteId: templateId, // Link the page to the template
+      elements,  // Save the components with their positions
+    });
+
+    res.status(200).json({ message: "Page layout saved", page });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

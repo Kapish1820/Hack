@@ -16,7 +16,6 @@ const billingRoutes = require("./routes/billingRoutes");
 // Middleware
 const authMiddleware = require("./middleware/authMiddleware");
 
-const aiRoutes = require("./routes/aiRoutes");
 const app = express();
 
 // ----------------------
@@ -74,6 +73,9 @@ app.get("/api/debug/tenant", authMiddleware, async (req, res) => {
 
 const usageRoutes = require("./routes/usageRoutes");
 app.use("/api/usage", usageRoutes);
+
+const aiRoutes = require("./routes/aiRoutes");
+app.use("/api/ai", aiRoutes);
 
 // ----------------------
 // Start Server (ALWAYS LAST)
