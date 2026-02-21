@@ -21,3 +21,20 @@ app.listen(process.env.PORT, () =>
   console.log(`Server running on port ${process.env.PORT}`)
 );
 
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
+const authMiddleware = require("./middleware/authMiddleware");
+
+app.get("/api/test-protected", authMiddleware, (req, res) => {
+  res.json({
+    message: "Access granted",
+    user: req.user
+  });
+});
+
+const websiteRoutes = require("./routes/websiteRoutes");
+app.use("/api/websites", websiteRoutes);
+
+const pageRoutes = require("./routes/pageRoutes");
+app.use("/api/pages", pageRoutes);
