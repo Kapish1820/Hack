@@ -16,7 +16,6 @@ const billingRoutes = require("./routes/billingRoutes");
 // Middleware
 const authMiddleware = require("./middleware/authMiddleware");
 
-const aiRoutes = require("./routes/aiRoutes");
 const app = express();
 
 // ----------------------
@@ -39,8 +38,6 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("SitePilot API Running");
 });
-
-app.use("/ai", aiRoutes);
 
 // ----------------------
 // API Routes
@@ -74,6 +71,12 @@ app.get("/api/debug/tenant", authMiddleware, async (req, res) => {
 
 const usageRoutes = require("./routes/usageRoutes");
 app.use("/api/usage", usageRoutes);
+
+const aiRoutes = require("./routes/aiRoutes");
+app.use("/api/ai", aiRoutes);
+
+const templateRoutes = require("./routes/templateRoutes");
+app.use("/api/templates", templateRoutes);
 
 // ----------------------
 // Start Server (ALWAYS LAST)
