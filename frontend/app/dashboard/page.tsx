@@ -8,7 +8,6 @@ import { WebsiteCard } from "@/components/website-card"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
-
 interface User {
   id: string
   name: string
