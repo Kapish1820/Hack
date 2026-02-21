@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+import Link from "next/link"
 export default function SettingsPage() {
   return (
     <div className="p-8">
@@ -117,22 +118,28 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="billing" className="mt-6">
-          <div className="rounded-xl border border-border bg-card p-6">
-            <h3 className="mb-1 text-sm font-semibold text-foreground">
-              Current Plan
-            </h3>
-            <p className="mb-4 text-xs text-muted-foreground">
-              {"You're on the Pro plan."}
-            </p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-foreground">$29</span>
-              <span className="text-sm text-muted-foreground">/month</span>
-            </div>
-            <Button variant="outline" size="sm" className="mt-4">
-              Manage Subscription
-            </Button>
-          </div>
-        </TabsContent>
+  <div className="rounded-xl border border-border bg-card p-6">
+    <div className="flex items-start justify-between mb-4">
+      <div>
+        <h3 className="text-sm font-semibold text-foreground">Current Plan</h3>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          You're on the <span className="font-medium text-foreground">Pro</span> plan, billed monthly.
+        </p>
+      </div>
+      <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Active ✓</span>
+    </div>
+
+    <div className="flex items-end justify-between">
+      <div className="flex items-baseline gap-1">
+        <span className="text-3xl font-bold text-foreground">$29</span>
+        <span className="text-sm text-muted-foreground">/month</span>
+      </div>
+      <Link href="/dashboard/billings">
+        <Button size="sm" variant="outline">Upgrade Plan →</Button>
+      </Link>
+    </div>
+  </div>
+</TabsContent>
 
         <TabsContent value="domains" className="mt-6">
           <div className="rounded-xl border border-border bg-card p-6">
