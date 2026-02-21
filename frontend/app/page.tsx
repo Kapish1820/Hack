@@ -18,7 +18,7 @@ import {
   Star,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-
+import SplineModel from "@/components/Model";
 
 /* ─── Animated Background ─── */
 function MeshBackground() {
@@ -536,71 +536,110 @@ export default function LandingPage() {
       </header>
 
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden px-6 pt-24 pb-20 lg:pt-36 lg:pb-32">
-        <ParticleField />
-        <OrbitRing />
-
-        <div className="relative z-10 mx-auto max-w-5xl text-center">
-          <FadeInSection>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-              </span>
-              <span className="text-xs font-medium text-primary">
-                Now in Public Beta
-              </span>
-            </div>
-          </FadeInSection>
-
-          <FadeInSection delay={100}>
-            <h1 className="text-balance text-5xl font-bold leading-[1.06] tracking-tight text-foreground md:text-7xl lg:text-8xl">
-              Websites that{" "}
-              <span
-                className="bg-clip-text text-transparent"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(to right, var(--primary), var(--accent), var(--primary))",
-                  backgroundSize: "200% auto",
-                  animation: "gradient-shift 6s ease infinite",
-                }}
-              >
-                build themselves
-              </span>
-            </h1>
-          </FadeInSection>
-
-          <FadeInSection delay={200}>
-            <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-              Describe what you need. SitePilot generates production-ready
-              websites with AI that understands design, copy, and code. No
-              templates. No limits.
-            </p>
-          </FadeInSection>
-
-          <FadeInSection delay={300}>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link href="/sign-up">
-                <Button
-                  size="lg"
-                  className="gap-2 px-8 text-base font-semibold"
-                >
-                  Start Building Free
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="#about">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="gap-2 border-border px-8 text-base text-foreground hover:bg-secondary"
-                >
-                  Learn More
-                </Button>
-              </a>
-            </div>
-          </FadeInSection>
+      <section className="relative min-h-screen overflow-hidden bg-background">
+        {/* Ambient glow */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute right-[5%] top-[10%] h-[600px] w-[600px] rounded-full bg-primary/10 blur-[140px]" />
+          <div className="absolute right-[20%] bottom-[10%] h-[300px] w-[300px] rounded-full bg-accent/8 blur-[100px]" />
         </div>
+
+        {/* Spline — pinned to right half, fully interactive */}
+        <div className="absolute right-0 top-0 hidden h-full w-1/2 lg:block">
+          <SplineModel />
+          {/* Covers the "Built with Spline" watermark */}
+          <div className="absolute bottom-3 right-3 z-50 h-15 w-44 bg-background rounded-md" />
+        </div>
+
+        {/* Text — left half only, normal flow */}
+        <div className="relative z-10 flex min-h-screen flex-col justify-center px-6 lg:w-1/2 lg:px-16">
+          <div className="mb-6 flex items-center gap-2">
+            <div className="h-px w-8 bg-primary" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary">
+              AI Website Builder
+            </span>
+          </div>
+
+          <h1 className="text-5xl font-bold leading-[1.1] tracking-tight text-foreground md:text-6xl xl:text-7xl">
+            Websites that
+            <br />
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              build themselves
+            </span>
+          </h1>
+
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
+            Describe your vision. Our AI generates, customizes, and deploys
+            production-ready websites in seconds — no code required.
+          </p>
+
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <Link href="/sign-up">
+              <Button size="lg" className="gap-2 px-8 text-base font-semibold">
+                Start Building Free
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link href="/sign-in">
+              <Button
+                variant="ghost"
+                size="lg"
+                className="gap-2 text-base text-muted-foreground hover:text-foreground"
+              >
+                Sign In
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="mt-12 flex items-center gap-4">
+            <div className="flex -space-x-2">
+              {["S", "M", "A", "J"].map((initial, i) => (
+                <div
+                  key={i}
+                  className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background bg-primary/20 text-xs font-bold text-primary"
+                >
+                  {initial}
+                </div>
+              ))}
+            </div>
+            <div>
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className="h-3.5 w-3.5 fill-primary text-primary"
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Loved by{" "}
+                <span className="font-semibold text-foreground">12,000+</span>{" "}
+                teams
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating badges over the model */}
+        <div className="animate-float-fast pointer-events-none absolute bottom-20 right-[48%] z-20 hidden rounded-xl border border-border/50 bg-card/80 px-4 py-2.5 shadow-xl backdrop-blur-md lg:flex">
+          <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+            <Zap className="h-4 w-4 text-primary" />
+            Built in 90s
+          </span>
+        </div>
+
+        <div
+          className="animate-float-fast pointer-events-none absolute right-8 top-28 z-20 hidden rounded-xl border border-border/50 bg-card/80 px-4 py-2.5 shadow-xl backdrop-blur-md lg:flex"
+          style={{ animationDelay: "-2s" }}
+        >
+          <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+            <Sparkles className="h-4 w-4 text-primary" />
+            AI-Powered
+          </span>
+        </div>
+
+        {/* Bottom fade */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
       </section>
 
       {/* ─── Stats Bar ─── */}
