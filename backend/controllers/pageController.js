@@ -98,8 +98,6 @@ exports.updateComponentPosition = async (req, res) => {
   }
 };
 
-const Page = require("../models/Page");
-
 exports.saveLayout = async (req, res) => {
   try {
     const { elements, templateId } = req.body;

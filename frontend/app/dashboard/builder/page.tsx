@@ -1,38 +1,43 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import TemplateLibrary from "@/components/template/template-library"; // Import TemplateLibrary component
-import { useDrag, useDrop } from "react-dnd"; // Import react-dnd hooks
-import api from "@/lib/api"; // API utility for interacting with the backend
+import TemplateLibrary from "./template-library";
+import BusinessInfoForm from "./BusinessInfoForm";
+import { TEMPLATE_REGISTRY } from "@/templates";
 
-const BuilderPage = () => {
+export default function BuilderPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
-  const [elements, setElements] = useState<any[]>([]);
+  const [businessInfo, setBusinessInfo] = useState<any>(null);
+  const [aiContent, setAiContent] = useState<any>(null);
   const router = useRouter();
 
-  // Handle template selection
+  // STEP 1: Template Selected
   const handleSelectTemplate = (template: any) => {
     setSelectedTemplate(template);
-    setElements(template.layout); // Load the selected template's layout
   };
 
-  // Handle saving the layout to the backend
-  const handleSaveLayout = async () => {
+  // STEP 2: Business Info Submitted → Call AI
+  const handleBusinessSubmit = async (info: any) => {
+    setBusinessInfo(info);
+
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/pages/save-layout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        elements,
-        templateId: selectedTemplate._id, // Store which template user selected
-      }),
-    });
+    const res = await fetch(
+      "http://localhost:5000/api/ai/customize-template",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          templateId: selectedTemplate.id, // IMPORTANT: use template.id
+          businessInfo: info,
+        }),
+      }
+    );
 
     const data = await res.json();
 
@@ -41,110 +46,88 @@ const BuilderPage = () => {
       return;
     }
 
+    // AI returns structured content
+    setAiContent(data.content);
+  };
+
+  const handleSaveWebsite = async () => {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      "http://localhost:5000/api/pages/save-layout",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          templateId: selectedTemplate.id,
+          content: aiContent,
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const data = await res.json();
+      alert(data.message);
+      return;
+    }
+
     router.push("/dashboard/websites");
   };
 
-  // Move element logic
-  const moveElement = (fromIndex: number, toIndex: number) => {
-    const updatedElements = [...elements];
-    const [movedElement] = updatedElements.splice(fromIndex, 1);
-    updatedElements.splice(toIndex, 0, movedElement);
-    setElements(updatedElements);
-  };
+  // ----------------------------
+  // FLOW CONTROL
+  // ----------------------------
 
-  return (
-    <div className="p-8">
-      {!selectedTemplate ? (
+  if (!selectedTemplate) {
+    return (
+      <div className="p-8">
         <TemplateLibrary onSelectTemplate={handleSelectTemplate} />
-      ) : (
-        <div>
-          <h2 className="text-xl font-bold text-foreground">Edit Your Website</h2>
+      </div>
+    );
+  }
 
-          <div style={{ position: "relative", height: "500px", border: "1px solid black" }}>
-            {elements.map((element, index) => (
-              <DraggableElement
-                key={index}
-                element={element}
-                index={index}
-                moveElement={moveElement}
-                saveElementPosition={saveElementPosition}
-              />
-            ))}
-          </div>
+  if (!businessInfo) {
+    return (
+      <div className="p-8">
+        <BusinessInfoForm
+          template={selectedTemplate}
+          onSubmit={handleBusinessSubmit}
+        />
+      </div>
+    );
+  }
 
-          <Button onClick={handleSaveLayout}>Save Layout</Button>
-        </div>
-      )}
-    </div>
-  );
-};
+  // ----------------------------
+  // RENDER TEMPLATE
+  // ----------------------------
 
-// Draggable Element component
-const DraggableElement = ({ element, index, moveElement, saveElementPosition }: any) => {
-  const [, drag] = useDrag(() => ({
-    type: "element",
-    item: { index },
-  }));
-
-  const [, drop] = useDrop({
-    accept: "element",
-    hover: (item: any) => {
-      if (item.index !== index) {
-        moveElement(item.index, index);
-        item.index = index;
-      }
-    },
-  });
-
-  const handleDragEnd = (e: any) => {
-    const x = e.clientX;  // Get the X position after drag
-    const y = e.clientY;  // Get the Y position after drag
-    saveElementPosition(element._id, x, y);  // Save the position to the backend
-  };
+  const TemplateComponent =
+    TEMPLATE_REGISTRY[selectedTemplate.id];
 
   return (
-    <div
-      ref={(node) => drag(drop(node))}
-      style={{
-        position: "absolute",
-        top: element.y,
-        left: element.x,
-        cursor: "pointer",
-      }}
-      onDragEnd={handleDragEnd}
-    >
-      {element.type === "text" ? (
-        <p>{element.content}</p>
-      ) : (
-        <button>{element.content}</button>
-      )}
+    <div className="min-h-screen bg-gray-100">
+
+      {/* TOP BAR */}
+      <div className="flex justify-between items-center p-6 bg-white shadow">
+        <h2 className="text-xl font-bold">
+          Editing: {selectedTemplate.name}
+        </h2>
+
+        <Button onClick={handleSaveWebsite}>
+          Save Website
+        </Button>
+      </div>
+
+      {/* LIVE WEBSITE RENDER */}
+      <div className="bg-white">
+        {TemplateComponent && (
+          <TemplateComponent content={aiContent || {}} />
+        )}
+      </div>
+
     </div>
   );
-};
-
-// Save element position
-const saveElementPosition = async (componentId: string, x: number, y: number) => {
-  const token = localStorage.getItem("token");
-
-  const res = await fetch("http://localhost:5000/api/pages/update-component-position", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      pageId: "page_id_here",  // Replace with actual pageId
-      componentId,
-      x,
-      y,
-    }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    alert(data.message);
-  }
-};
-
-export default BuilderPage;
+}

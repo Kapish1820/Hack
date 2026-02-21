@@ -39,8 +39,6 @@ app.get("/", (req, res) => {
   res.send("SitePilot API Running");
 });
 
-app.use("/ai", aiRoutes);
-
 // ----------------------
 // API Routes
 // ----------------------
@@ -76,6 +74,9 @@ app.use("/api/usage", usageRoutes);
 
 const aiRoutes = require("./routes/aiRoutes");
 app.use("/api/ai", aiRoutes);
+
+const templateRoutes = require("./routes/templateRoutes");
+app.use("/api/templates", templateRoutes);
 
 // ----------------------
 // Start Server (ALWAYS LAST)
